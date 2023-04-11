@@ -9,11 +9,11 @@ import {
   Title,
   Subtitle,
   Button,
-  ContentArea,
-  CUSTOMUPLOAD,
-  CartDropdownContainer,
-  EmptyMessage,
-  CartItems,
+  MarginArea,
+  ContentBox,
+  Content1,
+  Content2,
+  ButtonSpan,
 } from "./app.styles.jsx";
 
 var products = {
@@ -140,6 +140,7 @@ const SkinTonePicker = () => {
   const handleTakePhoto = (dataUri) => {
     setPhoto(dataUri);
     fileInputRef.current.value = "";
+    setShowCamera(false);
   };
 
   const handleUploadPhoto = (event) => {
@@ -296,14 +297,14 @@ const SkinTonePicker = () => {
     <Container>
       <GlobalStyle />
       {showStartScreen && (
-        <ContentArea>
-          <Title>Shade Analyzer</Title>
+        <MarginArea>
+          <Title>Shade Finder</Title>
           <Subtitle>Find your exact shade using your camera or photo</Subtitle>
 
           {isDesktop && <Button onClick={handleClickCamera}>Use Camera</Button>}
 
           <Button onClick={handleClickUpload}>Upload a file</Button>
-        </ContentArea>
+        </MarginArea>
       )}
 
       <input
@@ -323,40 +324,44 @@ const SkinTonePicker = () => {
       )}
 
       {photo && (
-        <ContentArea>
-          <img
-            src={photo}
-            style={{ width: "300px", height: "300px" }}
-            alt="Selected"
-          />
-          <Button onClick={showResults}>Use this photo</Button>
-          <Button onClick={handleClickUpload}>Try another</Button>
-
-          {nearestShades && 0 in nearestShades && (
-            <div>
-              {skinTone && (
-                <p
-                  style={{
-                    backgroundColor: rgbToHex(
-                      skinTone.r,
-                      skinTone.g,
-                      skinTone.b
-                    ),
-                  }}
-                >
-                  Average skin tone: {skinTone.r} {skinTone.g} {skinTone.b}
-                </p>
+        <MarginArea>
+          <ContentBox>
+            <Content1>
+              <img
+                src={photo}
+                alt="Selected"
+              />
+            </Content1>
+            <Content2>
+              {nearestShades && 0 in nearestShades && (
+                <div>
+                  {skinTone && (
+                    <p
+                      style={{
+                        backgroundColor: rgbToHex(
+                          skinTone.r,
+                          skinTone.g,
+                          skinTone.b
+                        ),
+                      }}
+                    >
+                      Average skin tone: {skinTone.r} {skinTone.g} {skinTone.b}
+                    </p>
+                  )}
+                  <p>You're nearest shade is Shade #{nearestShades[0][0]}</p>
+                  <p>Top five shades in order:</p>
+                  <ol>
+                    {Object.entries(nearestShades).map((t, k) => (
+                      <li key={k}>Shade #{nearestShades[k][0]}</li>
+                    ))}
+                  </ol>
+                </div>
               )}
-              <p>You're nearest shade is Shade #{nearestShades[0][0]}</p>
-              <p>Top five shades in order:</p>
-              <ol>
-                {Object.entries(nearestShades).map((t, k) => (
-                  <li key={k}>Shade #{nearestShades[k][0]}</li>
-                ))}
-              </ol>
-            </div>
-          )}
-        </ContentArea>
+            </Content2>
+          </ContentBox>
+          <ButtonSpan onClick={showResults}>Use this photo</ButtonSpan>
+          <ButtonSpan onClick={handleClickUpload}>Try another</ButtonSpan>
+        </MarginArea>
       )}
     </Container>
   );
