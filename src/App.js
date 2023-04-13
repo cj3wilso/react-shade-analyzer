@@ -1,7 +1,9 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { isMobile, isDesktop } from "react-device-detect";
 import Camera from "react-html5-camera-photo";
 import "react-html5-camera-photo/build/css/index.css";
+
+import CropImage from "./components/crop-image.component.jsx";
 
 import {
   GlobalStyle,
@@ -131,14 +133,30 @@ var products = {
 
 const SkinTonePicker = () => {
   const [photo, setPhoto] = useState(null);
+  const [photoChosen, setPhotoChosen] = useState(null);
+  const [photoWidth, setPhotoWidth] = useState(null);
+  const [photoHeight, setPhotoHeight] = useState(null);
   const [skinTone, setSkinTone] = useState(null);
   const [nearestShades, setNearestShades] = useState([]);
   const [showCamera, setShowCamera] = useState(false);
   const [showStartScreen, setShowStartScreen] = useState(true);
   const fileInputRef = useRef(null);
 
+  useEffect(() => {
+    // Create a new image object with the Base64 URL as the source
+    const img = new Image();
+    img.src = photo;
+
+    // Once the image has loaded, get the width/height and set
+    img.onload = () => {
+      setPhotoWidth(img.width);
+      setPhotoHeight(img.height);
+    };
+  }, [photo]);
+
   const handleTakePhoto = (dataUri) => {
     setPhoto(dataUri);
+    setPhotoChosen(dataUri);
     fileInputRef.current.value = "";
     setShowCamera(false);
   };
@@ -148,6 +166,7 @@ const SkinTonePicker = () => {
     const reader = new FileReader();
     reader.onload = () => {
       setPhoto(reader.result);
+      setPhotoChosen(reader.result);
     };
     reader.readAsDataURL(file);
     setShowStartScreen(false);
@@ -171,7 +190,7 @@ const SkinTonePicker = () => {
       },
       false
     );
-    image.src = photo;
+    image.src = photoChosen;
   };
 
   const getAverageSkinToneRGB = (imageData) => {
@@ -293,6 +312,10 @@ const SkinTonePicker = () => {
     setShowStartScreen(false);
   };
 
+  const chooseCroppedImage = (croppedPhoto) => {
+    setPhotoChosen(croppedPhoto);
+  };
+
   return (
     <Container>
       <GlobalStyle />
@@ -327,9 +350,11 @@ const SkinTonePicker = () => {
         <MarginArea>
           <ContentBox>
             <Content1>
-              <img
+              <CropImage
                 src={photo}
-                alt="Selected"
+                width={photoWidth}
+                height={photoHeight}
+                chooseCroppedImage={chooseCroppedImage}
               />
             </Content1>
             <Content2>
