@@ -1,21 +1,22 @@
-import React, { useState, useRef, useEffect } from "react";
-import { isMobile, isDesktop } from "react-device-detect";
+import { useState, useRef, useEffect } from "react";
+import { isDesktop } from "react-device-detect";
 import Camera from "react-html5-camera-photo";
 import "react-html5-camera-photo/build/css/index.css";
 
-import CropImage from "./components/crop-image.component.jsx";
+import CropImage from "./components/crop-image/crop-image.component.jsx";
 
+import Button, {
+  BUTTON_TYPE_CLASSES,
+} from "./components/button/button.component.tsx";
 import {
   GlobalStyle,
   Container,
   Title,
   Subtitle,
-  Button,
   MarginArea,
   ContentBox,
   Content1,
   Content2,
-  ButtonSpan,
 } from "./app.styles.jsx";
 
 var products = {
@@ -226,22 +227,22 @@ const SkinTonePicker = () => {
 
   const getNearestShade = (averageRGB) => {
     let nearest_shades_array = [];
-    Object.keys(products).map((key, index) => {
+    nearest_shades_array = Object.keys(products).map((key, index) => {
       console.log("key", key);
       console.log("value", products[key]);
       const productRGB = hexToRgb(products[key]);
-      console.log(
-        "color distance inside loop",
-        colourDistance(
-          productRGB.r,
-          productRGB.g,
-          productRGB.b,
-          averageRGB.r,
-          averageRGB.b,
-          averageRGB.g
-        )
-      );
-      nearest_shades_array.push([
+      // console.log(
+      //   "color distance inside loop",
+      //   colourDistance(
+      //     productRGB.r,
+      //     productRGB.g,
+      //     productRGB.b,
+      //     averageRGB.r,
+      //     averageRGB.b,
+      //     averageRGB.g
+      //   )
+      // );
+      return [
         key,
         colourDistance(
           productRGB.r,
@@ -250,13 +251,13 @@ const SkinTonePicker = () => {
           averageRGB.r,
           averageRGB.b,
           averageRGB.g
-        ),
-      ]);
+        )
+        ];
     });
     nearest_shades_array.sort(function (a, b) {
       return a[1] - b[1];
     });
-    console.log("in order", nearest_shades_array);
+    // console.log("in order", nearest_shades_array);
     setNearestShades(nearest_shades_array.slice(0, 5));
   };
 
@@ -324,9 +325,20 @@ const SkinTonePicker = () => {
           <Title>Shade Finder</Title>
           <Subtitle>Find your exact shade using your camera or photo</Subtitle>
 
-          {isDesktop && <Button onClick={handleClickCamera}>Use Camera</Button>}
-
-          <Button onClick={handleClickUpload}>Upload a file</Button>
+          {isDesktop && (
+            <Button
+              buttonType={BUTTON_TYPE_CLASSES.wide}
+              onClick={handleClickCamera}
+            >
+              Use Camera
+            </Button>
+          )}
+          <Button
+            buttonType={BUTTON_TYPE_CLASSES.wide}
+            onClick={handleClickUpload}
+          >
+            Upload a file
+          </Button>
         </MarginArea>
       )}
 
@@ -384,8 +396,15 @@ const SkinTonePicker = () => {
               )}
             </Content2>
           </ContentBox>
-          <ButtonSpan onClick={showResults}>Use this photo</ButtonSpan>
-          <ButtonSpan onClick={handleClickUpload}>Try another</ButtonSpan>
+          <Button buttonType={BUTTON_TYPE_CLASSES.base} onClick={showResults}>
+            Use this photo
+          </Button>
+          <Button
+            buttonType={BUTTON_TYPE_CLASSES.base}
+            onClick={handleClickUpload}
+          >
+            Try another
+          </Button>
         </MarginArea>
       )}
     </Container>

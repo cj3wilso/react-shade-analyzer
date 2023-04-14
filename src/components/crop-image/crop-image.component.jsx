@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./crop-image.css";
 
 // import {
@@ -6,10 +6,28 @@ import "./crop-image.css";
 //   CircleSelector,
 // } from "./crop-image.styles.jsx";
 
+import Button, { BUTTON_TYPE_CLASSES } from "../button/button.component.tsx";
+
 const CropImage = ({ src, width, height, chooseCroppedImage }) => {
+  const [circleX, setCircleX] = useState(null);
+  const [circleY, setCircleY] = useState(null);
+  // const [outputImage, setOutputImage] = useState(null);
+  const [circleWidth, setCircleWidth] = useState(null);
+  const [circleHeight, setCircleHeight] = useState(null);
+  const [classCropped, setClassCropped] = useState("");
+
   useEffect(() => {
     makeResizableDiv(".resizable");
-  }, []);
+  }, [makeResizableDiv]);
+
+  useEffect(() => {
+    const circleWidthHalfPicture = width / 2;
+    const circleHeightHalfPicture = height / 2;
+    setCircleX((width - width / 2) / 2);
+    setCircleY((height - height / 2) / 2);
+    setCircleWidth(circleWidthHalfPicture);
+    setCircleHeight(circleHeightHalfPicture);
+  }, [width, height]);
 
   function makeResizableDiv(div) {
     const element = document.querySelector(div);
@@ -99,9 +117,6 @@ const CropImage = ({ src, width, height, chooseCroppedImage }) => {
             setCircleY(original_y + (e.pageY - original_mouse_y));
           }
         }
-        if (newWidth !== null) {
-          setRadius(calculateRadius(newWidth, newHeight));
-        }
       }
 
       function stopResize() {
@@ -109,27 +124,6 @@ const CropImage = ({ src, width, height, chooseCroppedImage }) => {
       }
     }
   }
-
-  const [radius, setRadius] = useState(null);
-  const [circleX, setCircleX] = useState(null);
-  const [circleY, setCircleY] = useState(null);
-  const [outputImage, setOutputImage] = useState(null);
-  const [circleWidth, setCircleWidth] = useState(null);
-  const [circleHeight, setCircleHeight] = useState(null);
-
-  useEffect(() => {
-    const circleWidthHalfPicture = width / 2;
-    const circleHeightHalfPicture = height / 2;
-    setCircleX((width - width / 2) / 2);
-    setCircleY((height - height / 2) / 2);
-    setCircleWidth(circleWidthHalfPicture);
-    setCircleHeight(circleHeightHalfPicture);
-    setRadius(calculateRadius(circleWidthHalfPicture, circleHeightHalfPicture));
-  }, [width, height]);
-
-  const calculateRadius = (radiusWidth, radiusHeight) => {
-    return Math.min(radiusWidth, radiusHeight) / 2;
-  };
 
   const handleButtonClick = () => {
     const canvas = document.createElement("canvas");
@@ -158,8 +152,8 @@ const CropImage = ({ src, width, height, chooseCroppedImage }) => {
     ctx.restore();
 
     const croppedImage = canvas.toDataURL();
-    setOutputImage(croppedImage);
-
+    // setOutputImage(croppedImage);
+    setClassCropped("cropped");
     chooseCroppedImage(croppedImage);
   };
 
@@ -186,9 +180,21 @@ const CropImage = ({ src, width, height, chooseCroppedImage }) => {
           <div className="resizer bottom-right"></div>
         </div>
       </div>
-      <img id="image" src={src} width={width} height={height} />
-      <button onClick={handleButtonClick}>Done</button>
-      {outputImage && (
+      <img
+        id="image"
+        src={src}
+        width={width}
+        height={height}
+        alt="Uploaded face"
+      />
+      <Button
+        buttonType={BUTTON_TYPE_CLASSES.inverted}
+        onClick={handleButtonClick}
+        className={classCropped}
+      >
+        Crop
+      </Button>
+      {/* {outputImage && (
         <img
           src={outputImage}
           alt="Cropped Picture"
@@ -213,7 +219,7 @@ const CropImage = ({ src, width, height, chooseCroppedImage }) => {
         Circle X: {circleX} <br />
         Circle Radius: {radius} <br />
         Radius of Arc: {Math.min(circleWidth, circleHeight)}
-      </div>
+      </div> */}
     </div>
   );
 };

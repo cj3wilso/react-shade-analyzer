@@ -1,11 +1,5 @@
 import styled, { createGlobalStyle } from "styled-components";
 
-// import {
-//   BaseButton,
-//   GoogleSignInButton,
-//   InvertedButton,
-// } from '../button/button.styles';
-
 export const GlobalStyle = createGlobalStyle`
 body{
     font-family: "Roboto", Arial, sans-serif !important;
@@ -50,28 +44,28 @@ export const Subtitle = styled.div`
   order: 2;
 `;
 
-export const Button = styled.button`
-  font-size: 18px;
-  text-transform: uppercase;
-  color: white;
-  background-color: black;
-  cursor: pointer;
-  width: 100%;
-  max-width: 700px;
-  border: 0;
-  padding: calc(1px + 1.5625vw);
-  /*margin: 0 3vh 3vh;*/
-  margin-bottom: 3vh;
-  display:block;
-`;
+// export const Button = styled.button`
+//   font-size: 18px;
+//   text-transform: uppercase;
+//   color: white;
+//   background-color: black;
+//   cursor: pointer;
+//   width: 100%;
+//   max-width: 700px;
+//   border: 0;
+//   padding: calc(1px + 1.5625vw);
+//   /*margin: 0 3vh 3vh;*/
+//   margin-bottom: 3vh;
+//   display:block;
+// `;
 
-export const ButtonSpan = styled(Button)`
-  display: inline-block;
-  margin-top: 10px;
-  margin-right: 0.25rem;
-  width: auto;
-  max-width: none;
-`;
+// export const ButtonSpan = styled(Button)`
+//   display: inline-block;
+//   margin-top: 10px;
+//   margin-right: 0.25rem;
+//   width: auto;
+//   max-width: none;
+// `;
 
 // export const ContentArea = styled(Container)`
 // box-sizing: border-box;
