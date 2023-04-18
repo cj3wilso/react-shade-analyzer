@@ -17,6 +17,7 @@ import {
   ContentBox,
   Content1,
   Content2,
+  NearestShadeText,
 } from "./app.styles.jsx";
 
 var products = {
@@ -135,25 +136,11 @@ var products = {
 const SkinTonePicker = () => {
   const [photo, setPhoto] = useState(null);
   const [photoChosen, setPhotoChosen] = useState(null);
-  const [photoWidth, setPhotoWidth] = useState(null);
-  const [photoHeight, setPhotoHeight] = useState(null);
   const [skinTone, setSkinTone] = useState(null);
   const [nearestShades, setNearestShades] = useState([]);
   const [showCamera, setShowCamera] = useState(false);
   const [showStartScreen, setShowStartScreen] = useState(true);
   const fileInputRef = useRef(null);
-
-  useEffect(() => {
-    // Create a new image object with the Base64 URL as the source
-    const img = new Image();
-    img.src = photo;
-
-    // Once the image has loaded, get the width/height and set
-    img.onload = () => {
-      setPhotoWidth(img.width);
-      setPhotoHeight(img.height);
-    };
-  }, [photo]);
 
   const handleTakePhoto = (dataUri) => {
     setPhoto(dataUri);
@@ -173,7 +160,7 @@ const SkinTonePicker = () => {
     setShowStartScreen(false);
   };
 
-  const showResults = async (photoUri) => {
+  const showResults = async () => {
     var canvas = document.createElement("canvas"),
       context = canvas.getContext("2d"),
       image = new Image();
@@ -228,8 +215,8 @@ const SkinTonePicker = () => {
   const getNearestShade = (averageRGB) => {
     let nearest_shades_array = [];
     nearest_shades_array = Object.keys(products).map((key, index) => {
-      console.log("key", key);
-      console.log("value", products[key]);
+      // console.log("key", key);
+      // console.log("value", products[key]);
       const productRGB = hexToRgb(products[key]);
       // console.log(
       //   "color distance inside loop",
@@ -251,14 +238,15 @@ const SkinTonePicker = () => {
           averageRGB.r,
           averageRGB.b,
           averageRGB.g
-        )
-        ];
+        ),
+      ];
     });
     nearest_shades_array.sort(function (a, b) {
       return a[1] - b[1];
     });
     // console.log("in order", nearest_shades_array);
     setNearestShades(nearest_shades_array.slice(0, 5));
+    console.log(nearest_shades_array);
   };
 
   const colourDistance = (r, g, b, cr, cb, cg) => {
@@ -364,32 +352,46 @@ const SkinTonePicker = () => {
             <Content1>
               <CropImage
                 src={photo}
-                width={photoWidth}
-                height={photoHeight}
                 chooseCroppedImage={chooseCroppedImage}
               />
             </Content1>
             <Content2>
               {nearestShades && 0 in nearestShades && (
                 <div>
-                  {skinTone && (
-                    <p
+                  <NearestShadeText>
+                    You're nearest shade is Shade #{nearestShades[0][0]}
+                    <span
                       style={{
                         backgroundColor: rgbToHex(
                           skinTone.r,
                           skinTone.g,
                           skinTone.b
                         ),
+                        width: "20px",
+                        height: "20px",
+                        display: "inline-block",
+                        marginLeft: "10px",
+                        borderRadius: "50%"
                       }}
-                    >
-                      Average skin tone: {skinTone.r} {skinTone.g} {skinTone.b}
-                    </p>
-                  )}
-                  <p>You're nearest shade is Shade #{nearestShades[0][0]}</p>
+                    ></span>
+                  </NearestShadeText>
                   <p>Top five shades in order:</p>
                   <ol>
                     {Object.entries(nearestShades).map((t, k) => (
-                      <li key={k}>Shade #{nearestShades[k][0]}</li>
+                      <li key={k}>Shade #{nearestShades[k][0]} <span
+                      style={{
+                        backgroundColor: rgbToHex(
+                          skinTone.r,
+                          skinTone.g,
+                          skinTone.b
+                        ),
+                        width: "20px",
+                        height: "20px",
+                        display: "inline-block",
+                        marginLeft: "10px",
+                        borderRadius: "50%"
+                      }}
+                    ></span></li>
                     ))}
                   </ol>
                 </div>

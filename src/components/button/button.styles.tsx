@@ -44,6 +44,9 @@ export const InvertedButton = styled(BaseButton)`
   margin-bottom: 0;
   padding-top: 1.2vw;
   padding-bottom: 1.2vw;
+  -webkit-border-top-right-radius: 10px;
+  -moz-border-radius-topright: 10px;
+  border-top-right-radius: 10px;
   &:before {
     content: "\\2713";
     color: green;
@@ -53,6 +56,10 @@ export const InvertedButton = styled(BaseButton)`
   }
   &.cropped:before {
     visibility: visible;
+  }
+  &:after {
+    content: "\";
+    padding: 0 0 0 17px;
   }
   &:hover {
     background-color: black;

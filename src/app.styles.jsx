@@ -1,6 +1,9 @@
 import styled, { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
+html, body {
+  touch-action: pan-y;
+}
 body{
     font-family: "Roboto", Arial, sans-serif !important;
 }
@@ -32,6 +35,13 @@ export const Title = styled.div`
   white-space: pre;
   text-align: left;
   order: 1;
+`;
+
+export const NearestShadeText = styled.div`
+  font-size: 1.2em;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
 `;
 
 export const Subtitle = styled.div`
@@ -75,11 +85,12 @@ export const MarginArea = styled.div`
   box-sizing: border-box;
   padding: calc(8px + 1.5625vw);
   height: 100%;
+  width: 100%;
 `;
 
 export const ContentBox = styled.div`
   display: flex;
-  gap: 0.25rem;
+  gap: 0.5rem;
   flex-direction: row;
   flex-wrap: wrap;
   width: 100%;
@@ -91,14 +102,19 @@ export const Content1 = styled.div`
   flex-direction: column;
   flex-basis: 100%;
   overflow: hidden;
-  height: 50%;
+  height: 65%;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  -webkit-box-shadow: 5px 5px 8px -1px rgba(0, 0, 0, 0.18);
+  box-shadow: 5px 5px 8px -1px rgba(0, 0, 0, 0.18);
   @media screen and (min-width: 800px) {
     flex: 3;
     height: 100%;
   }
   img {
-    width: auto;
-    height: 100%;
+    width: 100%;
+    height: auto;
     align-self: center;
     overflow: hidden;
   }
@@ -106,16 +122,16 @@ export const Content1 = styled.div`
 export const Content2 = styled(Content1)`
   background: rgba(255, 255, 255, 0.9);
   //background: white;
-  -webkit-box-shadow: 5px 5px 8px -1px rgba(0, 0, 0, 0.38);
-  box-shadow: 5px 5px 8px -1px rgba(0, 0, 0, 0.38);
+  
   border: white solid 2px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
+  
   box-sizing: border-box;
   padding: 0.25rem;
+  padding: 1rem;
+  height: 35%;
   @media screen and (min-width: 800px) {
-    flex: 1;
+    height: 100%;
+    flex: 2;
   }
 `;
 

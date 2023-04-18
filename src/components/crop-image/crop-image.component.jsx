@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./crop-image.css";
 
 // import {
@@ -8,7 +8,8 @@ import "./crop-image.css";
 
 import Button, { BUTTON_TYPE_CLASSES } from "../button/button.component.tsx";
 
-const CropImage = ({ src, width, height, chooseCroppedImage }) => {
+const CropImage = ({ src, chooseCroppedImage }) => {
+  const imgColRef = useRef(null);
   const [circleX, setCircleX] = useState(null);
   const [circleY, setCircleY] = useState(null);
   // const [outputImage, setOutputImage] = useState(null);
@@ -21,13 +22,15 @@ const CropImage = ({ src, width, height, chooseCroppedImage }) => {
   }, [makeResizableDiv]);
 
   useEffect(() => {
-    const circleWidthHalfPicture = width / 2;
-    const circleHeightHalfPicture = height / 2;
-    setCircleX((width - width / 2) / 2);
-    setCircleY((height - height / 2) / 2);
+    const imgColWidth = imgColRef.current.offsetWidth;
+    const imgColHeight = imgColRef.current.offsetHeight;
+    const circleWidthHalfPicture = imgColWidth / 2;
+    const circleHeightHalfPicture = imgColHeight / 2;
+    setCircleX((imgColWidth - imgColWidth / 2) / 2);
+    setCircleY((imgColHeight - imgColHeight / 2) / 2);
     setCircleWidth(circleWidthHalfPicture);
     setCircleHeight(circleHeightHalfPicture);
-  }, [width, height]);
+  }, [src]);
 
   function makeResizableDiv(div) {
     const element = document.querySelector(div);
@@ -128,7 +131,8 @@ const CropImage = ({ src, width, height, chooseCroppedImage }) => {
   const handleButtonClick = () => {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
-    const image = document.getElementById("image");
+    const image = new Image();
+    image.src = src;
     canvas.width = circleWidth;
     canvas.height = circleHeight;
 
@@ -159,8 +163,15 @@ const CropImage = ({ src, width, height, chooseCroppedImage }) => {
 
   return (
     <div
+      ref={imgColRef}
       style={{
         position: "relative",
+        backgroundImage: `url("${src}")`,
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+        width: '100%',
+        height: '100%'
       }}
     >
       <div
@@ -180,13 +191,13 @@ const CropImage = ({ src, width, height, chooseCroppedImage }) => {
           <div className="resizer bottom-right"></div>
         </div>
       </div>
-      <img
+      {/* <img
         id="image"
         src={src}
         width={width}
         height={height}
         alt="Uploaded face"
-      />
+      /> */}
       <Button
         buttonType={BUTTON_TYPE_CLASSES.inverted}
         onClick={handleButtonClick}
