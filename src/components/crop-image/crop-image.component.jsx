@@ -62,6 +62,8 @@ const CropImage = ({ src, chooseCroppedImage }) => {
         original_mouse_y = e.pageY;
         window.addEventListener("mousemove", resize);
         window.addEventListener("mouseup", stopResize);
+        window.addEventListener("touchmove", resize);
+        window.addEventListener("ontouchend", stopResize);
       });
 
       function resize(e) {
