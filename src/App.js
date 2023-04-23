@@ -135,7 +135,8 @@ const SkinTonePicker = () => {
   };
 
   const colourDistance = (r, g, b, cr, cb, cg) => {
-    const distance = (r - cr) ** 2 + (g - cg) ** 2 + (b - cb) ** 2;
+    //const distance = (r - cr) ** 2 + (g - cg) ** 2 + (b - cb) ** 2;
+    const distance = ((r-cr)*0.30)**2 + ((g-cg)*0.59)**2 + ((b-cb)*0.11)**2
     return distance;
   };
 

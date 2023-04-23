@@ -10,125 +10,126 @@ import Button, { BUTTON_TYPE_CLASSES } from "../button/button.component.tsx";
 
 const CropImage = ({ src, chooseCroppedImage }) => {
   const imgColRef = useRef(null);
+
+  // const [outputImage, setOutputImage] = useState(null);
   const [circleX, setCircleX] = useState(null);
   const [circleY, setCircleY] = useState(null);
-  // const [outputImage, setOutputImage] = useState(null);
   const [circleWidth, setCircleWidth] = useState(null);
   const [circleHeight, setCircleHeight] = useState(null);
   const [classCropped, setClassCropped] = useState("");
 
+  const minimum_size = 20;
+
+  const resizableRef = useRef(null);
+  const resizerRef = useRef([]);
+
   useEffect(() => {
-    makeResizableDiv(".resizable");
-  }, [makeResizableDiv]);
+    makeResizableDiv();
+  }, []);
 
   useEffect(() => {
     const imgColWidth = imgColRef.current.offsetWidth;
     const imgColHeight = imgColRef.current.offsetHeight;
     const circleWidthHalfPicture = imgColWidth / 2;
     const circleHeightHalfPicture = imgColHeight / 2;
+
+    resizableRef.current.style.left =
+      (imgColWidth - imgColWidth / 2) / 2 + "px";
+    resizableRef.current.style.top =
+      (imgColHeight - imgColHeight / 2) / 2 + "px";
+    resizableRef.current.style.width = circleWidthHalfPicture + "px";
+    resizableRef.current.style.height = circleHeightHalfPicture + "px";
+
     setCircleX((imgColWidth - imgColWidth / 2) / 2);
     setCircleY((imgColHeight - imgColHeight / 2) / 2);
     setCircleWidth(circleWidthHalfPicture);
     setCircleHeight(circleHeightHalfPicture);
   }, [src]);
 
-  function makeResizableDiv(div) {
-    const element = document.querySelector(div);
-    const resizers = document.querySelectorAll(div + " .resizer");
-    const minimum_size = 20;
-    let original_width = 0;
-    let original_height = 0;
-    let original_x = 0;
-    let original_y = 0;
-    let original_mouse_x = 0;
-    let original_mouse_y = 0;
-    for (let i = 0; i < resizers.length; i++) {
-      const currentResizer = resizers[i];
-      currentResizer.addEventListener("mousedown", function (e) {
+  const makeResizableDiv = () => {
+    let originalWidth = 0;
+    let originalHeight = 0;
+    let originalX = 0;
+    let originalY = 0;
+    let originalMouseX = 0;
+    let originalMouseY = 0;
+    let classlist = null;
+
+    for (let i = 0; i < resizerRef.current.length; i++) {
+      resizerRef.current[i].addEventListener("pointerdown", function (e) {
         e.preventDefault();
-        original_width = parseFloat(
-          getComputedStyle(element, null)
-            .getPropertyValue("width")
-            .replace("px", "")
-        );
-        original_height = parseFloat(
-          getComputedStyle(element, null)
-            .getPropertyValue("height")
-            .replace("px", "")
-        );
-        original_x = element.getBoundingClientRect().left;
-        original_y = element.getBoundingClientRect().top;
-        original_mouse_x = e.pageX;
-        original_mouse_y = e.pageY;
-        window.addEventListener("mousemove", resize);
-        window.addEventListener("mouseup", stopResize);
-        window.addEventListener("touchmove", resize);
-        window.addEventListener("ontouchend", stopResize);
+        classlist = e.target.classList;
+        if (resizableRef !== null) {
+          originalWidth = parseFloat(
+            getComputedStyle(resizableRef.current, null)
+              .getPropertyValue("width")
+              .replace("px", "")
+          );
+          originalHeight = parseFloat(
+            getComputedStyle(resizableRef.current, null)
+              .getPropertyValue("height")
+              .replace("px", "")
+          );
+          originalX = resizableRef.current.getBoundingClientRect().left;
+          originalY = resizableRef.current.getBoundingClientRect().top;
+          originalMouseX = e.pageX;
+          originalMouseY = e.pageY;
+          window.addEventListener("pointermove", resize);
+          window.addEventListener("pointerup", stopResize);
+        }
       });
 
-      function resize(e) {
+      const resize = (e) => {
         let newWidth = null;
         let newHeight = null;
-        if (currentResizer.classList.contains("bottom-right")) {
-          newWidth = original_width + (e.pageX - original_mouse_x);
-          newHeight = original_height + (e.pageY - original_mouse_y);
+        if (classlist.contains("bottom-right")) {
+          newWidth = originalWidth + (e.pageX - originalMouseX);
+          newHeight = originalHeight + (e.pageY - originalMouseY);
           if (newWidth > minimum_size) {
-            //element.style.width = newWidth + "px";
             setCircleWidth(newWidth);
           }
           if (newHeight > minimum_size) {
-            //element.style.height = newHeight + "px";
             setCircleHeight(newHeight);
           }
-        } else if (currentResizer.classList.contains("bottom-left")) {
-          newHeight = original_height + (e.pageY - original_mouse_y);
-          newWidth = original_width - (e.pageX - original_mouse_x);
+        } else if (classlist.contains("bottom-left")) {
+          newHeight = originalHeight + (e.pageY - originalMouseY);
+          newWidth = originalWidth - (e.pageX - originalMouseX);
           if (newHeight > minimum_size) {
-            //element.style.height = newHeight + "px";
             setCircleHeight(newHeight);
           }
           if (newWidth > minimum_size) {
-            //element.style.width = newWidth + "px";
-            //element.style.left = original_x + (e.pageX - original_mouse_x) + "px";
             setCircleWidth(newWidth);
-            setCircleX(original_x + (e.pageX - original_mouse_x));
+            setCircleX(originalX + (e.pageX - originalMouseX));
           }
-        } else if (currentResizer.classList.contains("top-right")) {
-          newWidth = original_width + (e.pageX - original_mouse_x);
-          newHeight = original_height - (e.pageY - original_mouse_y);
+        } else if (classlist.contains("top-right")) {
+          newWidth = originalWidth + (e.pageX - originalMouseX);
+          newHeight = originalHeight - (e.pageY - originalMouseY);
           if (newWidth > minimum_size) {
-            //element.style.width = newWidth + "px";
             setCircleWidth(newWidth);
           }
           if (newHeight > minimum_size) {
-            //element.style.height = newHeight + "px";
-            //element.style.top = original_y + (e.pageY - original_mouse_y) + "px";
             setCircleHeight(newHeight);
-            setCircleY(original_y + (e.pageY - original_mouse_y));
+            setCircleY(originalY + (e.pageY - originalMouseY));
           }
         } else {
-          newWidth = original_width - (e.pageX - original_mouse_x);
-          newHeight = original_height - (e.pageY - original_mouse_y);
+          newWidth = originalWidth - (e.pageX - originalMouseX);
+          newHeight = originalHeight - (e.pageY - originalMouseY);
           if (newWidth > minimum_size) {
-            // element.style.width = newWidth + "px";
-            // element.style.left = original_x + (e.pageX - original_mouse_x) + "px";
             setCircleWidth(newWidth);
-            setCircleX(original_x + (e.pageX - original_mouse_x));
+            setCircleX(originalX + (e.pageX - originalMouseX));
           }
           if (newHeight > minimum_size) {
-            // element.style.height = newHeight + "px";
-            // element.style.top = original_y + (e.pageY - original_mouse_y) + "px";
             setCircleHeight(newHeight);
-            setCircleY(original_y + (e.pageY - original_mouse_y));
+            setCircleY(originalY + (e.pageY - originalMouseY));
           }
         }
-      }
+      };
 
-      function stopResize() {
-        window.removeEventListener("mousemove", resize);
-      }
+      const stopResize = () => {
+        window.removeEventListener("pointermove", resize);
+      };
     }
-  }
+  };
 
   const handleButtonClick = () => {
     const canvas = document.createElement("canvas");
@@ -158,7 +159,7 @@ const CropImage = ({ src, chooseCroppedImage }) => {
     ctx.restore();
 
     const croppedImage = canvas.toDataURL();
-    // setOutputImage(croppedImage);
+    //setOutputImage(croppedImage);
     setClassCropped("cropped");
     chooseCroppedImage(croppedImage);
   };
@@ -169,15 +170,16 @@ const CropImage = ({ src, chooseCroppedImage }) => {
       style={{
         position: "relative",
         backgroundImage: `url("${src}")`,
-        backgroundPosition: 'center',
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat',
-        width: '100%',
-        height: '100%'
+        backgroundPosition: "center",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        width: "100%",
+        height: "100%",
       }}
     >
       <div
         className="resizable"
+        ref={resizableRef}
         style={{
           top: circleY,
           left: circleX,
@@ -187,19 +189,24 @@ const CropImage = ({ src, chooseCroppedImage }) => {
       >
         <div className="resizers">
           <div className="outline"></div>
-          <div className="resizer top-left"></div>
-          <div className="resizer top-right"></div>
-          <div className="resizer bottom-left"></div>
-          <div className="resizer bottom-right"></div>
+          <div
+            ref={(el) => (resizerRef.current[0] = el)}
+            className="resizer top-left"
+          ></div>
+          <div
+            ref={(el) => (resizerRef.current[1] = el)}
+            className="resizer top-right"
+          ></div>
+          <div
+            ref={(el) => (resizerRef.current[2] = el)}
+            className="resizer bottom-left"
+          ></div>
+          <div
+            ref={(el) => (resizerRef.current[3] = el)}
+            className="resizer bottom-right"
+          ></div>
         </div>
       </div>
-      {/* <img
-        id="image"
-        src={src}
-        width={width}
-        height={height}
-        alt="Uploaded face"
-      /> */}
       <Button
         buttonType={BUTTON_TYPE_CLASSES.inverted}
         onClick={handleButtonClick}
@@ -230,7 +237,6 @@ const CropImage = ({ src, chooseCroppedImage }) => {
         Circle Height: {circleHeight} <br />
         Circle Y: {circleY} <br />
         Circle X: {circleX} <br />
-        Circle Radius: {radius} <br />
         Radius of Arc: {Math.min(circleWidth, circleHeight)}
       </div> */}
     </div>

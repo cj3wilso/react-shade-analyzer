@@ -2,7 +2,7 @@ import styled, { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
 html, body {
-  touch-action: pan-y;
+  touch-action: none;
 }
 body{
     font-family: "Roboto", Arial, sans-serif !important;
@@ -24,6 +24,12 @@ export const Container = styled.div`
   -o-background-size: cover;
   background-size: cover;
   border: 3px solid white;
+
+  &::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
 `;
 
 export const Title = styled.div`

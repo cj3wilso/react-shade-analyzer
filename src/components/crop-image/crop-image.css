@@ -6,10 +6,7 @@
     left: 100px;
     */
     position: absolute;
-    
     border-radius: 50%;
-    touch-action: pan-x pan-y pinch-zoom;
-    
   }
   .outline {
     width:100%;
